@@ -1,0 +1,13 @@
+name: my_method            # method name, also the default results label
+version: "0.1"             # recorded in status.json
+env: null                  # conda env name, or null to run in the current environment
+requires: [species_tree]   # any of: gene_trees, ploidy, species_tree, alignments
+output: network            # what network.nwk holds: multree or network
+partial_match: false       # true if the method infers only a limited number of reticulations (e.g. one), so
+                           # unmatched true reticulations are not penalized; false for full networks
+resources:
+  threads: 1               # passed to run.sh as the 4th argument
+  memory_gb: 4             # --mem on SLURM
+  time: "5-00:00:00"       # runtime limit D-HH:MM:SS (SLURM format), also the local timeout
+bool_flags: value          # optional: value (--key True) or switch (--key) for boolean params
+params: {}                 # defaults, overridable per run, passed to run.sh as a JSON file

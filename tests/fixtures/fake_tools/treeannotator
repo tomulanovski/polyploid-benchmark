@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Stand-in for TreeAnnotator -burninTrees N -heights mean <in> <out>: keeps the last tree, logs the burn-in
+set -euo pipefail
+burnin=$2; in=${*: -2:1}; out=${*: -1}
+echo "$burnin" > "$(dirname "$out")/burnin.txt"
+tree=$(grep "tree STATE_" "$in" | tail -1 | sed -E 's/^.*= *//')
+printf '#NEXUS\nBegin trees;\ntree TREE1 = %s\nEnd;\n' "$tree" > "$out"

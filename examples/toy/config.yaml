@@ -1,0 +1,9 @@
+# Toy example. Relative paths are relative to this file.
+data_root: data
+results_root: results
+
+# Every toy dataset ships species_tree.nwk, so no external tool is needed.
+tools: {}
+
+executor:
+  type: local

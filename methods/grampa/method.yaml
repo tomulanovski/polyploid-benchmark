@@ -1,0 +1,13 @@
+name: grampa
+version: "grandma-86abd14"   # GRANDMA commit; mode original runs GRAMPA v1.4.1
+env: null
+requires: [gene_trees, species_tree]
+output: multree
+partial_match: true
+resources:
+  threads: 8
+  memory_gb: 32
+  time: "5-00:00:00"
+params:
+  mode: iter_first    # iter_first: GRANDMA once, keep iteration (0, 0). original: standalone GRAMPA (tools.grampa)
+  cap: 15             # GRANDMA --cap for iter_first, as in the GRAMPAIter runs the paper took (0, 0) from

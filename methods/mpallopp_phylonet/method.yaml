@@ -1,0 +1,14 @@
+name: mpallopp_phylonet
+version: "phylonet-3.8.2"
+env: null               # needs java on PATH
+requires: [gene_trees]
+output: network
+partial_match: false
+resources:
+  threads: 12
+  memory_gb: 32
+  time: "5-00:00:00"
+params:
+  # PhyloNet command, the taxa map is appended as -a <...>. -di prints the network line the parser reads,
+  # run.sh replaces {threads} with resources.threads.
+  command: "InferNetwork_MP_Allopp (all) 1 -x 1 -pl {threads} -di"

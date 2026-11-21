@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Stand-in for Rscript generate_beast_xml.r <alloppdt> <input_dir> <output_dir> <chain_length> <log_every> <screen_log_every>:
+# writes alloppnet.XML holding the arguments and the taxa table
+set -euo pipefail
+in=$3; out=$4
+ls "$in"/*.nex > /dev/null
+{ echo "args: ${*:2}"; cat "$in/taxa_table.txt"; } > "$out/alloppnet.XML"

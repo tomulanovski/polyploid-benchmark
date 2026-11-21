@@ -1,0 +1,5 @@
+# Paper setting, results label polyphest_p90
+filter_strategy: percentile
+use_near_isomorphic: true
+percentile: 90
+isomorphic_threshold: 0.2

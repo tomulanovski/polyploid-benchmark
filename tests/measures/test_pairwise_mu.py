@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""
+Tests for the mu-distance entries that pairwise_compare reports.
+
+A pair whose networks fall outside the class of Theorem 1 must not take the
+whole comparison down with it, because the other metrics for that pair are
+still valid. Instead the mu columns carry NaN and mu_status records the reason,
+so failures are counted and visible in the results rather than skipped.
+"""
+
+import math
+import importlib.util
+from pathlib import Path
+
+import networkx as nx
+import pytest
+
+
+from polybench.measures.compare_reticulations import pairwise_compare
+from polybench.measures.reticulate_tree import ReticulateTree
+
+requires_reference = pytest.mark.skipif(
+    importlib.util.find_spec('phylonetwork') is None,
+    reason='mu-vectors come from phylonetwork, which is not installed here'
+)
+
+
+HEXAPLOID = "(((A,X),(B,X)),(C,X));"
+TETRAPLOID = "(((A,X),(B,X)),C);"
+RENAMED = "(((A,X),(B,X)),(Z,X));"
+
+
+def tree(newick):
+    return ReticulateTree(newick, is_multree=True)
+
+
+@requires_reference
+def test_pairwise_compare_reports_mu_columns():
+    metrics = pairwise_compare(tree(HEXAPLOID), tree(HEXAPLOID))
+    assert {'mu_distance', 'mu_scored'} <= set(metrics)
+
+
+@requires_reference
+def test_edit_distance_is_no_longer_reported():
+    """
+    Commented out in pairwise_compare, superseded by mu_distance. The method
+    itself is untouched on ReticulateTree and still callable.
+    """
+    metrics = pairwise_compare(tree(HEXAPLOID), tree(HEXAPLOID))
+    assert 'edit_distance_multree' not in metrics
+    assert tree(HEXAPLOID).get_edit_distance_multree(tree(HEXAPLOID)) == 0.0
+
+
+@requires_reference
+def test_identical_networks_score_zero_and_ok():
+    metrics = pairwise_compare(tree(HEXAPLOID), tree(HEXAPLOID))
+    assert metrics['mu_distance'] == 0.0
+    assert metrics['mu_scored'] == 1.0
+
+
+@requires_reference
+def test_different_networks_score_above_zero():
+    metrics = pairwise_compare(tree(HEXAPLOID), tree(TETRAPLOID))
+    assert metrics['mu_distance'] > 0.0
+    assert metrics['mu_scored'] == 1.0
+
+
+@requires_reference
+def test_only_the_normalized_distance_is_reported():
+    """
+    One distance column. The unnormalized published count stays reachable via
+    get_mu_distance(normalize=False) for ad hoc checks, but reporting both
+    doubled the cost since each call rebuilds both representations.
+    """
+    metrics = pairwise_compare(tree(HEXAPLOID), tree(TETRAPLOID))
+    assert 'mu_distance_raw' not in metrics
+    raw = tree(HEXAPLOID).get_mu_distance(tree(TETRAPLOID), normalize=False)
+    assert raw == int(raw) and raw > metrics['mu_distance']
+
+
+@requires_reference
+@pytest.mark.filterwarnings("ignore:mu-distance not computed:RuntimeWarning")  # expected for these inputs
+def test_mismatched_taxa_report_a_reason_without_losing_other_metrics():
+    metrics = pairwise_compare(tree(HEXAPLOID), tree(RENAMED))
+
+    assert math.isnan(metrics['mu_distance'])
+    assert metrics['mu_scored'] == 0.0
+    # the rest of the comparison is unaffected and still reported
+    assert metrics['num_rets_diff'] is not None
+    assert 'ploidy_diff' in metrics
+
+
+@requires_reference
+@pytest.mark.filterwarnings("ignore:mu-distance not computed:RuntimeWarning")  # expected for these inputs
+def test_network_outside_the_class_reports_the_reason():
+    G = nx.DiGraph()
+    G.add_edges_from([('root', 'p1'), ('root', 'p2'), ('root', 'p3'),
+                      ('p1', 'r1'), ('p2', 'r1'), ('p3', 'r2'), ('r1', 'r2'),
+                      ('r2', 'X'), ('p1', 'A'), ('p2', 'B'), ('p3', 'C')])
+    for leaf in ['A', 'B', 'C', 'X']:
+        G.nodes[leaf]['label'] = leaf
+    stacked = ReticulateTree(G)
+
+    metrics = pairwise_compare(stacked, stacked)
+
+    assert math.isnan(metrics['mu_distance'])
+    assert metrics['mu_scored'] == 0.0
+
+
+@requires_reference
+def test_every_reported_metric_is_numeric():
+    """
+    Metrics land in a long-format 'value' column that aggregate_replicates runs
+    mean/std/min/max over. A string there raises TypeError and takes the whole
+    summary down, so nothing reported may be text.
+    """
+    for pair in [(tree(HEXAPLOID), tree(HEXAPLOID)), (tree(HEXAPLOID), tree(RENAMED))]:
+        for name, value in pairwise_compare(*pair).items():
+            flat = value.values() if isinstance(value, dict) else [value]
+            for v in flat:
+                assert isinstance(v, (int, float)), f'{name} is not numeric: {v!r}'
+
+
+@requires_reference
+def test_unscorable_pair_warns_rather_than_passing_silently():
+    """A pair we could not score must say so, not just leave a NaN behind."""
+    import warnings
+    from polybench.measures import compare_reticulations
+    compare_reticulations._MU_REPORTED.clear()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter('always')
+        pairwise_compare(tree(HEXAPLOID), tree(RENAMED))
+    assert any('taxa' in str(w.message) for w in caught)
+
+
+@requires_reference
+def test_scored_flag_aggregates_to_a_success_fraction():
+    """mu_scored must survive numeric aggregation so losses are countable."""
+    import pandas as pd
+    rows = [pairwise_compare(tree(HEXAPLOID), tree(HEXAPLOID))['mu_scored'],
+            pairwise_compare(tree(HEXAPLOID), tree(RENAMED))['mu_scored']]
+    assert pd.Series(rows).mean() == 0.5
+
+
+@requires_reference
+def test_rf_distance_is_no_longer_reported():
+    """
+    Removed entirely. It was never used, and get_rf_distance built clades with
+    frozenset, which collapses duplicate labels and destroys exactly the
+    copy-number signal that matters for polyploids.
+    """
+    assert 'rf_distance' not in pairwise_compare(tree(HEXAPLOID), tree(HEXAPLOID))
+    assert not hasattr(tree(HEXAPLOID), 'get_rf_distance')

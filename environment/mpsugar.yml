@@ -1,0 +1,16 @@
+# Versions follow the paper (MP-SUGAR in PhyNetPy 0.0.8). PhyNetPy 0.0.8 declares no dependencies, these are the ones later PhyNetPy releases declare.
+name: mpsugar
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - numpy<2
+  - scipy
+  - networkx
+  - biopython
+  - matplotlib
+  - pulp
+  - pip:
+      - PhyNetPy==0.0.8
+      - python-nexus

@@ -1,0 +1,23 @@
+#NEXUS
+
+Begin taxa;
+	Dimensions ntax=5;
+	Taxlabels
+		A
+		B
+		C0
+		C1
+		D
+		;
+End;
+
+Begin trees;
+	Translate
+		1 A,
+		2 B,
+		3 C0,
+		4 C1,
+		5 D
+		;
+tree TREE1 = [&R] ((1[&height=0.0,height_95%_HPD={0.0,0.0}]:0.02,(2[&height=0.0]:0.01,3[&height=0.0]:0.01)[&posterior=0.91,height=0.01]:0.01)[&posterior=1.0]:0.01,(4[&height=0.0]:0.015,5[&height=0.0]:0.015)[&posterior=0.88]:0.015)[&posterior=1.0,height=0.03];
+End;

@@ -1,0 +1,16 @@
+Network: NetA_2001
+Configuration: conf_ils_low_10M
+Tree Height: 10M
+
+Parameters:
+-----------
+Effective Population Size (Ne): 200000
+Duplication rate: 0 per MY (0 per gen)
+Loss rate: 0 per MY (0 per gen)
+Transfer rate: 0 per MY (0 per gen)
+GC rate: 0 per MY (0 per gen)
+Generation time: 1 year(s)
+Number of Replicates: 5
+Substitution rate (sampled): 1.234500000000000e-09
+
+Base seed: 12345

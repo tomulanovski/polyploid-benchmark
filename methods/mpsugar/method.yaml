@@ -1,0 +1,14 @@
+name: mpsugar
+version: "phynetpy-0.0.8"
+env: mpsugar            # needs PhyNetPy, run_mpsugar.py runs with this env's python
+requires: [gene_trees]
+output: network
+partial_match: false
+resources:
+  threads: 1
+  memory_gb: 50
+  time: "5-00:00:00"
+params:
+  iterations: 500     # MP_SUGAR iter_ct, hill-climbing iterations per chain
+  chains: 1           # independent chains, the network of chain 1 is kept
+  seed: null          # seed of chain 1 (chain k gets seed + k - 1), null draws a random seed as in the paper runs

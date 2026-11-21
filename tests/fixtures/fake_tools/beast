@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Stand-in for BEAST: writes 11 sampled MUL-trees (star trees, B-genome species as <species>0 and <species>1)
+# into the working directory. FAKE_BEAST_SLEEP keeps it running afterwards, as a chain cut by the time limit:
+# no End; and a half-written last tree.
+set -euo pipefail
+xml=$1
+leaves=$(awk 'NF == 4 && $2 != "species" { n[$2] = n[$2] || $4 == "B" } END { for (s in n) print (n[s] ? s "0," s "1" : s) }' "$xml" | sort | paste -sd, -)
+{
+    echo "#NEXUS"
+    echo "Begin trees;"
+    for i in $(seq 0 10); do echo "tree STATE_$((i * 1000)) [&lnP=-1] = [&R] ($leaves);"; done
+    if [[ -n "${FAKE_BEAST_SLEEP:-}" ]]; then printf 'tree STATE_11000 [&lnP=-1] = [&R] (%s' "${leaves%%,*}"; else echo "End;"; fi
+} | tr -d '\r' > sampledmultrees.txt
+sleep "${FAKE_BEAST_SLEEP:-0}"

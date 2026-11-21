@@ -1,0 +1,20 @@
+{
+    "(0, 0)": {
+        "best_mt": "(((QloX*,Abc)<3>,Qlo03)<2>,(QloX**,Def)<P*>)<1>;",
+        "nonin_mt": "(((QloX*,Abc)<3>,Qlo03)<2>,(QloX**,Def)<P*>)<1>;",
+        "h_name": "<3>",
+        "h_locs": ["Abc", "Def"],
+        "h_leaves": ["QloX"],
+        "num_gts": 10,
+        "input_score": 52,
+        "nonin_score": 41,
+        "passed": true
+    },
+    "(1, 0)": {
+        "best_mt": "((Abc*,Qlo03)<2>,Def)<1>;",
+        "num_gts": 10,
+        "input_score": 30,
+        "nonin_score": "N/A",
+        "passed": false
+    }
+}

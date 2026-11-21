@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Stand-in for standalone GRAMPA: writes grampa-scores.txt from the species tree
+set -euo pipefail
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -s) species=$2; shift 2 ;;
+        -o) out=$2; shift 2 ;;
+        *) shift ;;
+    esac
+done
+mkdir -p "$out"
+tree=$(sed -E 's/\)/)<1>/g; s/([(,])([^(),:;<]+)/\1\2+/g' "$species" | tr -d '\r\n')
+printf 'mul.tree\th1.node\th2.node\tscore\tlabeled.tree\n1\t<1>\t<1>\t10\t%s\n' "$tree" > "$out/grampa-scores.txt"

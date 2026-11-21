@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Stand-in for java -jar PhyloNet.jar <file.nex>: prints a star network over the species of the -a taxa map
+set -euo pipefail
+nex=${*: -1}
+species=$(grep -o '<[^>]*>' "$nex" | tr -d '<>\r' | tr ';' '\n' | sed -E 's/^ *//; s/:.*//' | paste -sd, -)
+echo "Inferred Network #1:"
+echo "($species);"
+echo "Visualize in Dendroscope : ($species);"

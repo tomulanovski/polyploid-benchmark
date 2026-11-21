@@ -1,0 +1,14 @@
+name: polyphest
+version: "unpinned"    # upstream main of github.com/NakhlehLab/Polyphest, the paper gives no version
+env: polyphest
+requires: [gene_trees, ploidy]
+output: multree
+partial_match: false
+bool_flags: value       # true -> --key True, false leaves the flag out
+resources:
+  threads: 1
+  memory_gb: 50
+  time: "5-00:00:00"
+# Every key is passed to Polyphest.py as --key value, booleans as set by bool_flags.
+# filter_strategy is required by Polyphest, see examples/ for the paper settings.
+params: {}

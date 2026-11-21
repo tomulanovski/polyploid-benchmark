@@ -1,0 +1,6 @@
+ID species individual genome
+Ana_1_0_0 Ana Ana_L0_I0 A
+Ana_2_0_0 Ana Ana_L0_I0 B
+Bel_0_0 Bel Bel_0_0_ind A
+Cor_0_0 Cor Cor_0_0_ind A
+Dun_0_0 Dun Dun_0_0_ind A

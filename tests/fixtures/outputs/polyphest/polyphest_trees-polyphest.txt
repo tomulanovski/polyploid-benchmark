@@ -1,0 +1,3 @@
+multree: ((A,(B,C)),(C,D));
+network: ((A,(B,(C)#H1)),(#H1,D));
+Time taken: 0.42

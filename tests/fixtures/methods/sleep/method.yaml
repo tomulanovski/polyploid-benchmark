@@ -1,0 +1,8 @@
+name: sleep
+version: "0.1"
+env: null
+requires: [species_tree]
+output: network
+partial_match: false
+resources: {threads: 1, memory_gb: 1, time: "5-00:00:00"}
+params: {k: 1}

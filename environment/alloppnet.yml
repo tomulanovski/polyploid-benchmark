@@ -1,0 +1,8 @@
+# Versions follow the paper (BEAST and TreeAnnotator 1.8.2, installed by install_tools.sh). Rscript writes the BEAST XML.
+name: alloppnet
+channels:
+  - conda-forge
+dependencies:
+  - r-base
+  - r-ape
+  - openjdk=8

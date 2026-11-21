@@ -1,0 +1,12 @@
+name: padre
+version: "2.0"              # PADRE command-line version
+env: null
+requires: [gene_trees]
+output: multree
+partial_match: false
+resources:
+  threads: 1
+  memory_gb: 20
+  time: "5-00:00:00"
+params:
+  java_mem: 4g        # java -Xmx heap

@@ -1,0 +1,15 @@
+name: alloppnet
+version: "beast-1.8.2+alloppdt-2013-05-15"
+env: alloppnet          # R with ape (Rscript), BEAST 1.8.2 and TreeAnnotator 1.8.2
+requires: [alignments, ploidy]
+output: multree
+partial_match: false
+resources:
+  threads: 8
+  memory_gb: 32
+  time: "5-00:00:00"
+params:
+  chain_length: 100000000   # BEAST MCMC iterations
+  log_every: 1000           # sampling interval for MUL-trees, gene trees and parameters
+  screen_log_every: 10000
+  beast_hours: 118          # BEAST is stopped after this many hours and the samples so far are summarized

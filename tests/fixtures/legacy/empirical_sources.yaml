@@ -1,0 +1,8 @@
+results:
+  padre: padre/network.tre
+  grampa_iter: grandma_split/final_multree.tre
+  polyphest_p50: polyphest/network.tre
+  mpsugar: mpallop/network.tre
+datasets:
+  Emp_2020: {gene_trees: gene_trees/polyphest_trees.tre, ploidy: multiset_copies.txt,
+             species_tree: gene_trees/astral.tre, published_network: networks/paper/network.tre}

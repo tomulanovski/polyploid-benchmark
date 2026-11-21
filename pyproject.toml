@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polybench"
+version = "1.0.0"
+description = "Benchmark for polyploid phylogenetic network inference methods"
+license = { text = "MIT" }
+requires-python = ">=3.10,<3.12"
+dependencies = [
+    "ete3",
+    "six",
+    "networkx",
+    "pandas",
+    "scipy",
+    "numpy",
+    "matplotlib",
+    "pyyaml",
+    "phylonetwork==2.2.2",
+]
+
+[project.scripts]
+polybench = "polybench.cli:main"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["polybench*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "needs_cluster_fixture: compares against files copied from a cluster run, skipped when tests/fixtures/cluster/<method> is absent",
+    "needs_astral: runs the real ASTRAL binary, skipped unless POLYBENCH_ASTRAL is set",
+]

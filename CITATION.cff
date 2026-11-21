@@ -1,0 +1,11 @@
+# Co-authors to be added on publication.
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "polyploid-benchmark"
+authors:
+  - family-names: "Ulanovski"
+    given-names: "Tom"
+license: MIT
+version: 1.0.0
+doi: "10.5281/zenodo.XXXXXXX"
+# date-released: YYYY-MM-DD, to be set on release

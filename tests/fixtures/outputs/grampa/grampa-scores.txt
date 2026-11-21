@@ -1,0 +1,3 @@
+mul.tree	h1.node	h2.node	score	labeled.tree
+12	<3>	<5>	41	(((QloX*,Abc)<3>,Qlo03)<2>,(QloX+,Def)<5>)<1>
+7	<2>	<5>	44	(((QloX,Abc)<3>,Qlo03*)<2>,(Qlo03+,Def)<5>)<1>

@@ -1,0 +1,6 @@
+
+InferNetwork_MP_Allopp (all) 1 -x 1 -pl 12 -di -a <A:A; B:B; C:C,C_1,C_2; D:D>
+Inferred Network #1:
+((A,(B)I3#H1)I1,(I3#H1,(C,D)I4)I2)I0;
+Parsimony score: 3.0
+Visualize in Dendroscope : ((A,(B)#H1),(#H1,(C,D)));

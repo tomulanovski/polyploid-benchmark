@@ -1,0 +1,28 @@
+# Copy to config.yaml and edit. All paths are placeholders. Relative paths are relative to this file,
+# a tool given as a bare name (e.g. astral4) is looked up on PATH.
+data_root: /path/to/data
+results_root: /path/to/results
+
+# Only the tools your chosen methods need have to be set.
+tools:
+  simphy: /path/to/simphy
+  astral: /path/to/astral
+  iqtree: /path/to/iqtree
+  padre_jar: /path/to/padre.jar
+  grandma: /path/to/Grandma/gran.py
+  grampa: /path/to/grampa   # standalone GRAMPA, only for grampa mode: original
+  polyphest: /path/to/polyphest
+  phylonet_jar: /path/to/PhyloNet_3.8.2.jar
+  beast: /path/to/beast                    # BEAST 1.8.2, for alloppnet
+  treeannotator: /path/to/treeannotator
+  alloppdt: /path/to/AlloppDT              # folder with AlloppDT_5beastxml_toplevel.r and AlloppDT_6beastxml_bits.r
+
+executor:
+  type: local  # local or slurm
+  # Example #SBATCH lines used when type is slurm. Replace with your cluster's values.
+  # Do not set --time, --mem or --cpus-per-task here, they come from each method.yaml.
+  slurm_header:
+    - "#SBATCH --partition=YOUR_PARTITION"
+    - "#SBATCH --account=YOUR_ACCOUNT"
+  # Activates the conda env of a method with env set in method.yaml, the env name is appended.
+  conda_activate: "source /path/to/conda/etc/profile.d/conda.sh && conda activate"

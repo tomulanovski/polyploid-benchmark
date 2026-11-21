@@ -1,0 +1,16 @@
+name: grampa_iter
+version: "grandma-86abd14"   # GRANDMA commit
+env: null
+requires: [gene_trees, species_tree]
+output: multree
+partial_match: false
+bool_flags: switch      # true -> --key, false leaves the flag out (argparse store_true)
+resources:
+  threads: 8
+  memory_gb: 32
+  time: "5-00:00:00"
+# Every key is passed to gran.py as --key value, booleans as set by bool_flags. Paper: -m split -c 15 -i 50.
+params:
+  mode: split
+  cap: 15
+  iter: 50

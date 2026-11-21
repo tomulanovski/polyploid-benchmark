@@ -1,0 +1,37 @@
+# Legacy files of the empirical datasets, read by pack_dryad.py. Every FILL must be replaced before packing.
+#
+# results: results label -> result file under papers/<dataset>/networks/ (folders from scripts/papers_config.yaml).
+# A dataset without the folder is not packed for that label (the method was not run), a folder without a
+# non-empty file is packed as failed.
+results:
+  padre: padre/network.tre
+  grampa: grampa/network.tre
+  grampa_iter: grandma_split/final_multree.tre
+  polyphest_pFILL: polyphest/network.tre   # the percentile the empirical Polyphest runs used (50, 70 or 90)
+  FILL_mpallop: mpallop/network.tre        # mpsugar (MP-SUGAR) or mpallopp_phylonet (PhyloNet jar)
+  alloppnet: allopnet/network.tre
+
+# datasets: <dataset> -> files relative to papers/<dataset>/, null or absent when the dataset has none.
+#   gene_trees:        rooted gene trees given to the methods, leaf label = taxon name, copies repeat the label
+#                      (gene_trees/polyphest_trees.tre is the Polyphest input; the GRAMPA inputs have renamed labels)
+#   ploidy:            taxa_copies.json ({taxon: copies}) or a Polyphest multiset file (multiset_copies.txt)
+#   species_tree:      the ASTRAL species tree the methods used (e.g. gene_trees/astral.tre)
+#   published_network: the network published by the study (networks/paper/network.tre)
+#   alignments:        folder of <gene>.fasta (+ taxon_map.tsv) for AlloppNET
+# The 12 comparable datasets of scripts/papers_config.yaml:
+datasets:
+  Ren_2024: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Zhao_2021: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Ding_2023: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Koenen_2020: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Marcussen_2012: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Wu_2015: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Lawrence_2016: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Popp_2005: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Diaz-Perez_2018: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Marcussen_2015: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+  Morales-Briones_2021: {gene_trees: gene_trees/polyphest_trees.tre, ploidy: multiset_copies.txt, species_tree: FILL,
+                         published_network: networks/paper/network.tre}
+  Wisecaver_2023: {gene_trees: FILL, ploidy: FILL, species_tree: FILL, published_network: networks/paper/network.tre}
+# The other 9 (Bendiksby_2011, Brysting_2007, Liang_2019, Liu_2023, Marcussen_2011, Sessa_2012b, Hori_2014,
+# Shahrestani_2015, Soza_2014) have one sequenced gene; add them here if their gene trees go to Dryad.
