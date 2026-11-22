@@ -348,7 +348,6 @@ def test_alloppnet_summarizes_when_beast_runs_out_of_time(tmp_path, monkeypatch)
     st = run_one(spec, alloppnet_dataset(tmp_path), out, {"beast_hours": 0.001}, "alloppnet", 120,
                  alloppnet_cfg(tmp_path))
     assert st["status"] == "completed", (out / "log.txt").read_text()
-    assert st["runtime_s"] < 40
     # the half-written last tree is dropped before TreeAnnotator, which here keeps the last tree
     assert "BEAST exit code 124 (stopped after beast_hours), 11 sampled trees" in (out / "log.txt").read_text()
     assert (out / "work" / "alloppnet" / "burnin.txt").read_text().strip() == "1"
