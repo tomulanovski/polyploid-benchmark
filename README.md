@@ -18,6 +18,14 @@ pip install -e .
 bash environment/install_tools.sh          # downloads the external tools into tools/ and prints the tools: block
 ```
 
+If the conda solve runs out of memory, create a bare env and let pip install the rest:
+
+```bash
+conda create -n polybench -c conda-forge python=3.11 openjdk=11
+conda activate polybench
+pip install -e . "numpy<2" "pandas<3" scipy==1.12.0 psutil tqdm pyvis
+```
+
 Copy `config.example.yaml` to `config.yaml`, set `data_root` and `results_root` and paste the `tools:` block.
 Relative paths in a config are relative to the config file. Only the tools of the methods you run are needed.
 Methods with their own conda env (`env` in `method.yaml`) need it created from `environment/`:
