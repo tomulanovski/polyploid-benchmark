@@ -63,6 +63,7 @@ class Result:
     dataset_id: str
     status: str
     source: Path | None  # network file to copy, None for failed runs
+    tree: str | None = None  # network built here (GRAMPA from GRAMPAIter's history.json), written instead of source
 
 
 @dataclass
@@ -112,10 +113,36 @@ def check_copies(plan: "Plan") -> None:
             print(f"  {what}: {i}")
 
 
+def grampa_from_history(history: Path, taxa_map: Path) -> str:
+    # as update_grampa_from_grandma_history.py made grampa_result.tre: best_mt of iteration (0, 0), GRAMPA labels
+    # cleaned, the prep substring fix (taxa_map.txt: original<TAB>replacement) reversed
+    first = json.loads(history.read_text()).get("(0, 0)")
+    if not first or not first.get("best_mt"):
+        raise ValueError(f"{history}: no best_mt for iteration (0, 0)")
+    tree = clean_grampa_tree(first["best_mt"])
+    while ",," in tree:
+        tree = tree.replace(",,", ",")
+    tree = re.sub(r",\)", ")", re.sub(r"\(,", "(", tree)).strip()
+    if taxa_map.is_file():
+        pairs = [l.split("\t") for l in taxa_map.read_text().splitlines() if l.strip() and not l.startswith("#")]
+        for original, replacement in sorted((p for p in pairs if len(p) == 2), key=lambda p: -len(p[1])):
+            tree = re.sub(rf"\b{re.escape(replacement)}(?=[^a-zA-Z0-9_]|$)", original, tree)
+    tree = tree if tree.endswith(";") else tree + ";"
+    Tree(tree, format=1)  # raises on a bad tree
+    return tree
+
+
 def sim_result(net_dir: Path, legacy: str, label: str, k: int, plan: Plan, dataset_id: str) -> None:
     # legacy: the config's folder name in gene2net
     folder, fname = SIM_RESULTS[label]
     run_dir = net_dir / "results" / legacy / folder / f"replicate_{k}"
+    if label == "grampa" and not run_dir.is_dir():
+        # configs without a grampa folder: GRAMPA is GRAMPAIter's first iteration, taken from its history.json
+        history = net_dir / "results" / legacy / "grandma_split" / f"replicate_{k}" / "history.json"
+        if history.is_file():
+            taxa_map = net_dir / "processed" / legacy / "grampa_input" / f"replicate_{k}" / "taxa_map.txt"
+            plan.results.append(Result(label, dataset_id, "completed", history, grampa_from_history(history, taxa_map)))
+        return
     # PADRE wrote its output into processed/, postprocess_results.py only made the results folder when it found one
     ran = (net_dir / "processed" / legacy / "padre_input" / f"replicate_{k}").is_dir() if label == "padre" \
         else run_dir.is_dir()
@@ -422,7 +449,8 @@ def write_result(res: Result, out: Path, root: Path, infos: dict) -> None:
     d = out / "results" / res.label / res.dataset_id
     d.mkdir(parents=True, exist_ok=True)
     if res.source is not None:
-        (d / "network.nwk").write_text(res.source.read_text(encoding="utf-8").strip() + "\n", encoding="utf-8")
+        text = res.tree if res.tree is not None else res.source.read_text(encoding="utf-8")
+        (d / "network.nwk").write_text(text.strip() + "\n", encoding="utf-8")
     status = {"status": res.status, "runtime_s": None, **infos[res.label],
               "source": "gene2net legacy run" + (f": {res.source.relative_to(root).as_posix()}" if res.source else "")}
     (d / "status.json").write_text(json.dumps(status, indent=2))

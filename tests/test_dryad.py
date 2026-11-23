@@ -232,3 +232,15 @@ def test_config_map_and_zero_replicates(tmp_path, capsys):
     assert f"simulated {CONFIG}: 2 replicates" in out and "1 match" in out
     with pytest.raises(ValueError, match="LEGACY=NEW"):
         pack.main(args + ["--config-map", "conf_ils_low_10M_old=unknown"])
+
+
+def test_grampa_from_history_as_legacy_script(tmp_path):
+    history = tmp_path / "history.json"
+    history.write_text(json.dumps({"(0, 0)": {"best_mt": "((QloX*<1>,c+)<2>,(QloX,Qlo03)<3>)<4>"}}))
+    taxa_map = tmp_path / "taxa_map.txt"
+    taxa_map.write_text("Qlo\tQloX\n")
+    assert pack.grampa_from_history(history, taxa_map) == "((Qlo,c),(Qlo,Qlo03));"
+    assert pack.grampa_from_history(history, tmp_path / "none.txt") == "((QloX,c),(QloX,Qlo03));"
+    history.write_text(json.dumps({"(1, 0)": {"best_mt": "(a,b);"}}))
+    with pytest.raises(ValueError, match=r"iteration \(0, 0\)"):
+        pack.grampa_from_history(history, taxa_map)
