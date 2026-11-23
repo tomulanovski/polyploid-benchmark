@@ -135,7 +135,9 @@ def sim_result(net_dir: Path, legacy: str, label: str, k: int, plan: Plan, datas
 
 
 def species_file_for(rep_dir: Path, config: str, net_dir: Path, k: int, legacy_names: dict) -> Path:
-    found = sorted(rep_dir.rglob("s_tree.trees"), key=natural_key)
+    # same folder rule as the gene trees: a top-level 1/ next to batch_* folders is not used
+    batch_1 = rep_dir / "batch_1"
+    found = sorted((batch_1 if batch_1.is_dir() else rep_dir).rglob("s_tree.trees"), key=natural_key)
     if found:
         return found[0]
     base = CONFIGS[config].get("base")
@@ -177,8 +179,10 @@ def plan_simulated(root: Path, configs, n_trees: int, plan: Plan, legacy_names: 
                 raise FileNotFoundError(f"{data}: no replicate_<k> folders")
             for rep_dir in reps:
                 k = int(rep_dir.name[10:])
-                # legacy prep order: shell glob over batch_*/ then g_*.trees, i.e. lexicographic per folder
-                genes = sorted(rep_dir.rglob("g_trees*.trees"), key=lambda f: f.relative_to(rep_dir).parts)
+                # as prep_grampa.sh: batch_*/1/ when batch_1 exists (a top-level 1/ is then ignored), else 1/;
+                # shell glob order, i.e. lexicographic per folder
+                pattern = "batch_*/1/g_trees*.trees" if (rep_dir / "batch_1").is_dir() else "1/g_trees*.trees"
+                genes = sorted(rep_dir.glob(pattern), key=lambda f: f.relative_to(rep_dir).parts)
                 if len(genes) != n_trees:
                     raise ValueError(f"{rep_dir}: expected {n_trees} g_trees*.trees files, found {len(genes)}")
                 alloppnet_input = net_dir / "processed" / legacy / "alloppnet_input" / f"replicate_{k}"

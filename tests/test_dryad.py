@@ -74,7 +74,7 @@ def test_gene_trees_restored_as_simulate_writes(packed):
     raw = rep.joinpath("simphy_gene_trees.nwk").read_text().splitlines()
     mapping = {"Eve_1": "Eve", "Eve_2": "Eve", "Fay": "Fay", "Gus": "Gus", "Hal": "Hal", "Ivy": "Ivy"}
     assert rep.joinpath("gene_trees.nwk").read_text().splitlines() == [restore_simphy_labels(g, mapping) for g in raw]
-    # legacy prep order: batch_1, batch_10, batch_2, ... (shell glob)
+    # legacy prep order: batch_1, batch_10, batch_2, ... (shell glob); the stray top-level 1/ is ignored
     assert [g.split(":")[1].split(",")[0] for g in raw] == [str(1 + i / 10) for i in [1, 10, 2, 3, 4, 5, 6, 7, 8, 9]]
     params = dict(line.split("=", 1) for line in rep.joinpath("simphy_params.txt").read_text().splitlines())
     assert params["ne"] == "200000" and params["subst_rate"] == "f:1.234500000000000e-09"
