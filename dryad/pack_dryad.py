@@ -142,6 +142,8 @@ def sim_result(net_dir: Path, legacy: str, label: str, k: int, plan: Plan, datas
         if history.is_file():
             taxa_map = net_dir / "processed" / legacy / "grampa_input" / f"replicate_{k}" / "taxa_map.txt"
             plan.results.append(Result(label, dataset_id, "completed", history, grampa_from_history(history, taxa_map)))
+        else:
+            plan.notes.append(f"no GRAMPA result (no grampa folder, no history.json): {history.parent}")
         return
     # PADRE wrote its output into processed/, postprocess_results.py only made the results folder when it found one
     ran = (net_dir / "processed" / legacy / "padre_input" / f"replicate_{k}").is_dir() if label == "padre" \
