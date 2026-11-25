@@ -244,3 +244,12 @@ def test_grampa_from_history_as_legacy_script(tmp_path):
     history.write_text(json.dumps({"(1, 0)": {"best_mt": "(a,b);"}}))
     with pytest.raises(ValueError, match=r"iteration \(0, 0\)"):
         pack.grampa_from_history(history, taxa_map)
+
+
+def test_species_mapping_with_repeated_leaf_names(tmp_path):
+    net = tmp_path / "net.tre"
+    net.write_text("((A,B),(A,C));")
+    assert pack.species_mapping("((A_1,B),(A_2,C));", net) == {"A_1": "A", "B": "B", "A_2": "A", "C": "C"}
+    assert pack.species_mapping("((A,B),(A,C));", net) == {"A": "A", "B": "B", "C": "C"}
+    with pytest.raises(ValueError, match="do not match"):
+        pack.species_mapping("((A,B),C);", net)

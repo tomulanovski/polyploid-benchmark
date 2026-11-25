@@ -317,11 +317,12 @@ def simphy_params(r: SimRep, n_trees: int) -> str:
 
 
 def species_mapping(stree: str, model_net: Path) -> dict:
-    # species tree leaf -> taxon (legacy labels: taxon, or taxon_<copy> for the copies of a polyploid)
+    # species tree leaf -> taxon (legacy labels: taxon_<copy> for the copies of a polyploid,
+    # or the repeated taxon name as in Morales-Briones_2021)
     leaves = Tree(stree, format=1).get_leaf_names()
     mapping = {leaf: leaf.split("_", 1)[0] for leaf in leaves}
     truth = Counter(Tree(model_net.read_text().strip(), format=1).get_leaf_names())
-    if Counter(mapping.values()) != truth:
+    if Counter(mapping[leaf] for leaf in leaves) != truth:
         raise ValueError(f"SimPhy species tree leaves {sorted(leaves)} do not match model network {model_net.name}")
     return mapping
 
