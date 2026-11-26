@@ -60,7 +60,7 @@ config, the method and the summary are adjusted.
 
 ## Reproduce the paper
 
-The Dryad package (doi:10.5061/dryad.XXXXXXX) holds the input data (`data/`, in the layout below), the result
+The Dryad package (to be published with the paper) holds the input data (`data/`, in the layout below), the result
 of every method on every dataset (`results/<label>/`) and the summary (`results/summary/`). The simulated data
 (`data/simulated/`) and the results on it (`results/<label>/simulated/`) are packed per configuration in
 `archives/*.tar.gz`; extract them in the package folder before evaluating:
@@ -178,6 +178,4 @@ MIT, see [LICENSE](LICENSE).
 
 ## How to cite
 
-[citation to be added on publication]
-
-Software: doi:10.5281/zenodo.XXXXXXX. See also [CITATION.cff](CITATION.cff).
+[citation to be added on publication]. See also [CITATION.cff](CITATION.cff).
