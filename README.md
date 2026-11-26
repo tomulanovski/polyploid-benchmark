@@ -159,7 +159,7 @@ steps were done outside the pipeline, and the Dryad package holds their output.
 |---|---|---|---|---|---|
 | PADRE | `padre` | command-line 2.0 | gene trees | 1 | Lott et al. 2009, Bioinformatics 25:1199 |
 | GRAMPA | `grampa` | GRANDMA 86abd14, first iteration (GRAMPA v1.4.1 with `mode: original`) | gene trees, species tree | 8 | Thomas et al. 2017, Syst. Biol. 66:1007 |
-| GRAMPAIter | `grampa_iter` | GRANDMA 86abd14 (github.com/Roshex/Grandma) | gene trees, species tree | 8 | github.com/Roshex/Grandma |
+| GRAMPAIter | `grampa_iter` | GRANDMA 86abd14 (github.com/Roshex/Grandma) | gene trees, species tree | 8 | this paper |
 | Polyphest | `polyphest` | unpinned, upstream main (github.com/NakhlehLab/Polyphest) | gene trees, ploidy | 1 | Yan and Nakhleh, github.com/NakhlehLab/Polyphest |
 | MPAllopp | `mpsugar` | MP-SUGAR in PhyNetPy 0.0.8 | gene trees | 1 | Yan et al. 2022, Syst. Biol. 71:706 |
 | AlloppNET | `alloppnet` | BEAST 1.8.2, TreeAnnotator 1.8.2, AlloppDT | alignments, ploidy (diploids and tetraploids only) | 8 | Jones et al. 2013, Syst. Biol. 62:467 |

@@ -387,8 +387,11 @@ def write_alignments(r: SimRep, mapping: dict, out: Path) -> dict[str, int]:
     return copies
 
 
-def write_sim_rep(r: SimRep, out_data: Path, n_trees: int) -> None:
+def write_sim_rep(r: SimRep, out_data: Path, n_trees: int, resume: bool = False) -> None:
     out = out_data / "simulated" / r.config / r.network / f"rep{r.replicate}"
+    # simphy_params.txt follows the gene trees and taxon_map.tsv all alignments, so a replicate with both is complete
+    if resume and (out / "simphy_params.txt").is_file() and (not r.alloppnet_input or (out / "alignments" / "taxon_map.tsv").is_file()):
+        return
     out.mkdir(parents=True, exist_ok=True)
     stree = r.species_file.read_text().strip()
     mapping = species_mapping(stree, out_data / "model_networks" / f"{r.network}.tre")
@@ -509,6 +512,8 @@ def main(argv=None) -> None:
     ap.add_argument("--n-trees", type=int, default=1000, help="gene trees per replicate")
     ap.add_argument("--dry-run", action="store_true", help="print the plan and the source sizes, write nothing")
     ap.add_argument("--no-archives", action="store_true", help="do not write the per-config .tar.gz files")
+    ap.add_argument("--resume", action="store_true",
+                    help="continue an interrupted pack in --out, skipping the simulated replicates already written")
     a = ap.parse_args(argv)
     root, out = a.gene2net_root.resolve(), a.out.resolve()
 
@@ -541,20 +546,20 @@ def main(argv=None) -> None:
         print("dry run, nothing written")
         return
 
-    if out.exists() and any(out.iterdir()):
-        raise FileExistsError(f"{out} is not empty")
+    if not a.resume and out.exists() and any(out.iterdir()):
+        raise FileExistsError(f"{out} is not empty (--resume continues an interrupted pack)")
     data = out / "data"
-    (data / "model_networks").mkdir(parents=True)
+    (data / "model_networks").mkdir(parents=True, exist_ok=a.resume)
     for net in plan.networks:
         shutil.copyfile(net, data / "model_networks" / net.name)
     for r in plan.sim:
-        write_sim_rep(r, data, a.n_trees)
+        write_sim_rep(r, data, a.n_trees, a.resume)
     for ds, files in plan.emp.items():
         write_empirical(ds, files, data)
     infos = {label: method_info(label) for label in {r.label for r in plan.results}}
     for res in plan.results:
         write_result(res, out, root, infos)
-    (out / "distributions").mkdir()
+    (out / "distributions").mkdir(exist_ok=a.resume)
     for p in dists:
         shutil.copyfile(p, out / "distributions" / p.name)
 

@@ -246,6 +246,24 @@ def test_grampa_from_history_as_legacy_script(tmp_path):
         pack.grampa_from_history(history, taxa_map)
 
 
+def test_resume_rewrites_only_unfinished_replicates(tmp_path):
+    out = tmp_path / "pkg"
+    args = ["--gene2net-root", str(LEGACY), "--out", str(out), "--configs", CONFIG, "--n-trees", "10",
+            "--no-empirical", "--no-archives"]
+    pack.main(args)
+    reps = out / "data" / "simulated" / CONFIG
+    done, cut = reps / "NetA_2001" / "rep1", reps / "NetB_2002" / "rep1"
+    os.utime(done / "gene_trees.nwk", ns=(0, 0))
+    expected = (cut / "gene_trees.nwk").read_text()
+    (cut / "gene_trees.nwk").write_text("partial")
+    (cut / "simphy_params.txt").unlink()
+    with pytest.raises(FileExistsError, match="--resume"):
+        pack.main(args)
+    pack.main(args + ["--resume"])
+    assert (done / "gene_trees.nwk").stat().st_mtime_ns == 0
+    assert (cut / "gene_trees.nwk").read_text() == expected
+
+
 def test_species_mapping_with_repeated_leaf_names(tmp_path):
     net = tmp_path / "net.tre"
     net.write_text("((A,B),(A,C));")
